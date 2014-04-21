@@ -105,7 +105,10 @@ class RelatedFilesCommand(sublime_plugin.WindowCommand):
     # Opens the file in path.
     def __open_file(self, index):
         if index >= 0:
-            self.window.open_file(self.__related.files()[index])
+            selected_file = self.__related.files()[index]
+            if not os.path.isdir(os.path.dirname(selected_file)):
+                os.makedirs(os.path.dirname(selected_file))
+            self.window.open_file(selected_file)
         else:
             self.__status_msg("No related files found")
 
