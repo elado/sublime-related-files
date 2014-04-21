@@ -57,7 +57,16 @@ class Related(object):
         paths = [self.__replaced_path(match, path) for path in paths]
 
         if self.__create_new_files_option_enabled():
-            flattened = [self.__to_posixpath(path) for path in paths if not self.__path_contains_wildcard(path)]
+            non_wildcard_matches = [
+                self.__to_posixpath(path) for path in paths if not self.__path_contains_wildcard(path)
+            ]
+
+            wildcard_matches = [
+                glob.glob(os.path.join(self.__root, path)) for path in paths if self.__path_contains_wildcard(path)
+            ]
+
+            flattened = [self.__to_posixpath(path) for path in list(itertools.chain.from_iterable(wildcard_matches))]
+            flattened.extend(non_wildcard_matches)
         else:
             files = [glob.glob(os.path.join(self.__root, path)) for path in paths]
             flattened = [self.__to_posixpath(path) for path in list(itertools.chain.from_iterable(files))]
