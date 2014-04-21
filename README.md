@@ -35,6 +35,9 @@ The configuration has two parts: the key, which is a regular expression to match
 
 You can use the $1, $2, etc. on the glob strings to be replace by the extracted parts from the regex.
 
+If the "create_new_files" option is set to true, matches will appear for files that do not yet exist, allowing
+you to create them.
+
 In addition to global configs, you can also have per project configs. To add that, in a sublime project file (project-name.sublime-project),
 add this:
 
