@@ -56,8 +56,11 @@ class Related(object):
     def __files_for_paths(self, regex, match, paths):
         paths = [self.__replaced_path(match, path) for path in paths]
 
-        files = [glob.glob(os.path.join(self.__root, path)) for path in paths]
-        flattened = [self.__to_posixpath(path) for path in list(itertools.chain.from_iterable(files))]
+        if self.__create_new_files_option_enabled():
+            flattened = [self.__to_posixpath(path) for path in paths if not self.__path_contains_wildcard(path)]
+        else:
+            files = [glob.glob(os.path.join(self.__root, path)) for path in paths]
+            flattened = [self.__to_posixpath(path) for path in list(itertools.chain.from_iterable(files))]
 
         # Ignores current file
         if self.__file_path in flattened:
@@ -80,6 +83,12 @@ class Related(object):
     # Converts paths to posixpaths.
     def __to_posixpath(self, path):
         return re.sub("\\\\", "/", path)
+
+    def __create_new_files_option_enabled(self):
+        return sublime.load_settings("RelatedFiles.sublime-settings").get('create_new_files')
+
+    def __path_contains_wildcard(self, path):
+        return '**' in path
 
 class RelatedFilesCommand(sublime_plugin.WindowCommand):
     def run(self, index=None):
