@@ -118,6 +118,7 @@ class RelatedFilesCommand(sublime_plugin.WindowCommand):
             if not os.path.isdir(os.path.dirname(selected_file)):
                 os.makedirs(os.path.dirname(selected_file))
             self.window.open_file(selected_file)
+            sublime.set_timeout(lambda: self.window.open_file(selected_file), 0)
         else:
             self.__status_msg("No related files found")
 
